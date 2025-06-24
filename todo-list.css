@@ -1,0 +1,82 @@
+body {
+  height: 3000px;
+}
+
+button {
+  font-family: roboto, arial;
+}
+
+header {
+  display: flex;
+  font-family: roboto, arial;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+input {
+  padding: 5px 10px 5px 10px;
+}
+
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  padding-top: 10px;
+  padding-left: 5px;
+}
+
+.item {
+  display: grid;
+  column-gap: 30px;
+  grid-template-columns: 300px 150px 100px 100px;
+  margin-bottom: 15px;
+}
+
+.submit {
+  border-radius: 5px;
+  border-style: none;
+  background-color: rgb(40, 216, 5);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.add-container {
+  display: flex;
+  justify-content: center;
+}
+
+.add {
+  border-radius: 5px;
+  border-style: none;
+  background-color: rgb(40, 216, 5);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px 5px 10px;
+  width: 600px;
+
+}
+
+.date {
+  border-radius: 5px;
+  border-style: none;
+  font-family: arial;
+}
+
+.delete {
+  background-color: red;
+  border-style: none;
+  color: white;
+  font-size: 20px;
+  padding: 5px 15px 5px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.child {
+  opacity: 1;
+}

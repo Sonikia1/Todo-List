@@ -58,7 +58,25 @@ input {
   cursor: pointer;
   padding: 5px 10px 5px 10px;
   width: 600px;
+  margin-right: 20px;
+}
 
+.add:active {
+  opacity: .7;
+}
+
+.clear {
+  background-color: black;
+  color: white;
+  border-style: none;
+  padding: 5px 15px 5px 15px;
+  border-radius: 5px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.clear:active {
+  opacity: .7;
 }
 
 .date {

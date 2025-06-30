@@ -5,6 +5,7 @@ const itemList = document.getElementsByClassName("item-list")[0]
 let deleteBtns = null
 let submitBtns = null
 let todoArray = []
+
 let counter = 0
 
 //localStorage.clear()
@@ -14,25 +15,34 @@ todoMap = new Map(todoMap)
 console.log(todoMap)
 console.log(todoMap.size)
 
+let rows = null
 
 
-
-if (todoMap.size == null) {
+if (todoMap.size == 0) {
   todoMap = new Map()
+  rows = 0
   //localStorage.getItem("list", JSON.stringify(Array.from(todoMap.entries())))
 } else {
-  const rows = todoMap.size / 2
+  rows = todoMap.size / 2
   console.log(rows)
   for (let i = 1; i <= rows; i++) {
-    addTemplate()
+    addTemplate(i)
     //textInput.textContent = todoMap.get(`item${i}`)
     //dateInput.textContent = todoMap.get(`dateItem${i}`) //textInput and date are not defined. may have to make separate function
   }
 
 }
 
+if (counter == null) {
+  counter = 0
+} else {
+  console.log(`rows after reload: ${rows}`)
+  counter = rows
+}
+
 addBtn.addEventListener("click", function() {
   counter += 1
+  //localStorage.setItem("counter", counter)
   addTemplate()
   deleteBtns = document.querySelectorAll(".delete")
   deleteBtns.forEach(function(Btn) {
@@ -50,7 +60,7 @@ addBtn.addEventListener("click", function() {
         todoMap.delete(`item${lastChar}`)
         todoMap.delete(`dateItem${lastChar}`)
 
-        //decreaseID(lastChar)
+        
 
         localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
         todoMap = new Map(JSON.parse(localStorage.getItem("list")))
@@ -61,7 +71,7 @@ addBtn.addEventListener("click", function() {
 
       
 
-      //decrease id of buttons after delete
+      
       
     })
     
@@ -71,6 +81,7 @@ addBtn.addEventListener("click", function() {
     Btn.addEventListener("click", function() {
       let lastChar = Btn.id[Btn.id.length - 1]
       let itemToSave = document.getElementById(`item${lastChar}`)
+      console.log(itemToSave)
       todoMap.set(`item${lastChar}`, itemToSave.querySelectorAll(".child")[0].value)
       todoMap.set(`dateItem${lastChar}`, itemToSave.querySelectorAll(".child")[1].value)
       localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
@@ -102,7 +113,11 @@ addBtn.addEventListener("click", function() {
 
 })
 
-function addTemplate() {
+const clearBtn = document.getElementsByClassName("clear")[0]
+clearBtn.addEventListener("click", deleteAll)
+
+
+function addTemplate(i) {
   let item = document.createElement("div")
   item.classList.add("item")
   item.id = `item${counter}`
@@ -111,14 +126,18 @@ function addTemplate() {
 
   let textInput = document.createElement("input")
   textInput.setAttribute("type", "text")
+  
+
   textInput.placeholder = "Whatcha wanna do?"
   textInput.classList.add("child")
+  textInput.id = `textInput${counter}`
   
   item.appendChild(textInput)
 
   let dateInput = document.createElement("input")
   dateInput.setAttribute("type", "date")
   dateInput.classList.add("child")
+  dateInput.id = `dateInput${counter}`
 
   item.appendChild(dateInput)
 
@@ -139,9 +158,21 @@ function addTemplate() {
    //checker(submitBtn)
 
 
-   if (todoMap.size != null)
+   if (todoMap.size != null && i !== undefined) {  
+      //let text = document.getElementById(`textInput${i}`)
+      //let date = document.getElementById(`dateInput${i}`)
 
-}
+      //console.log(`textInput${i}`)
+      //console.log(text)
+
+      
+
+      textInput.setAttribute("value", todoMap.get(`item${i}`))  //give elements back their id
+      dateInput.setAttribute("value", todoMap.get(`dateItem${i}`))
+    }
+   }
+
+
 
 
 function checker(tag) {
@@ -153,7 +184,36 @@ function checker(tag) {
 }
 
 
-function decreaseID(id) {
+
+
+
+
+function deleteAll() {
+  counter = 0
+  items = document.querySelectorAll(".item")
+  items.forEach(function(item) {
+    item.remove()
+  })
+
+  todoMap.clear()
+  localStorage.clear()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*function decreaseID(id) {
   items = document.querySelectorAll(".item")
   items.forEach( function(item) {
     let lastChar = item.id[item.id.length - 1]
@@ -176,6 +236,7 @@ function decreaseID(id) {
 
   })
 }
+*/
 
 
 
@@ -191,30 +252,3 @@ function decreaseID(id) {
 
 
 
-
-/*function GetToDO() {
-  let form = document.createElement("form")
-  document.body.appendChild(form)
-
-  let submitBtn = document.createElement("button")
-  submitBtn.classList.add("submit")
-  submitBtn.textContent = "Submit"
-
-  let textarea = document.createElement("textarea")
-  textarea.classList.add("item")
-
-  let label = document.createElement("label")
-  label.textContent = "Adding to your list:"
-
-  form.appendChild(label)
-  form.appendChild(textarea)
-  form.appendChild(submitBtn)
-
-  submitBtn.addEventListener("click", function() {
-    let input = textarea.value
-    console.log(typeof(input))
-    addToList(input)
-
-  })
-
-}*/

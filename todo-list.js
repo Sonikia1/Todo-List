@@ -4,9 +4,10 @@ const itemList = document.getElementsByClassName("item-list")[0]
 
 let deleteBtns = null
 let submitBtns = null
-let todoArray = []
+let lastTodo = null
 
 let counter = 0
+let pauseCounter = 0
 
 //localStorage.clear()
 let todoMap = JSON.parse(localStorage.getItem("list"))
@@ -21,14 +22,16 @@ let rows = null
 if (todoMap.size == 0) {
   todoMap = new Map()
   rows = 0
+  localStorage.setItem("lastTodo", 0)
   //localStorage.getItem("list", JSON.stringify(Array.from(todoMap.entries())))
 } else {
   rows = todoMap.size / 2
+  lastTodo = localStorage.getItem("lastTodo")
   console.log(rows)
   for (let i = 1; i <= rows; i++) {
     addTemplate(i)
     //textInput.textContent = todoMap.get(`item${i}`)
-    //dateInput.textContent = todoMap.get(`dateItem${i}`) //textInput and date are not defined. may have to make separate function
+    //dateInput.textContent = todoMap.get(`dateItem${i}`) 
   }
 
 }
@@ -40,45 +43,92 @@ if (counter == null) {
   counter = rows
 }
 
-addBtn.addEventListener("click", function() {
-  counter += 1
-  //localStorage.setItem("counter", counter)
-  addTemplate()
-  deleteBtns = document.querySelectorAll(".delete")
-  deleteBtns.forEach(function(Btn) {
-    Btn.addEventListener("click", function() {
-      let lastChar = Btn.id[Btn.id.length - 1]
-      let itemToRemove = document.getElementById(`item${lastChar}`)
-      console.log(lastChar)
-      console.log(Btn.id)
-      if (Btn.id === `delete${lastChar}`) {
-        itemToRemove.remove()
+let reload = null
+if (performance.getEntriesByType("navigation")[0].type === "reload") {
+    reload = true
+} else {
+    reload = false
+}
 
-        localStorage.removeItem(`item${lastChar}`)
-        localStorage.removeItem(`dateItem${lastChar}`)
 
-        todoMap.delete(`item${lastChar}`)
-        todoMap.delete(`dateItem${lastChar}`)
+deleteFunction()
 
-        
 
-        localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
-        todoMap = new Map(JSON.parse(localStorage.getItem("list")))
-        
-      }
-      
-      
 
-      
+submitBtns = document.querySelectorAll(".submit")
+submitBtns.forEach(function(Btn) {
+  Btn.addEventListener("click", function() {
+    pauseCounter += 1
+    let lastChar = Btn.id[Btn.id.length - 1]
+    let itemToSave = document.getElementById(`item${lastChar}`)
+    console.log(itemToSave)
+    todoMap.set(`item${lastChar}`, itemToSave.querySelectorAll(".child")[0].value)
+    todoMap.set(`dateItem${lastChar}`, itemToSave.querySelectorAll(".child")[1].value)
+    localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
 
-      
-      
-    })
+
+    if (lastTodo > lastChar) {
+      lastTodo = lastTodo
+    } else {
+      lastTodo = lastChar
+      localStorage.setItem("lastTodo", lastTodo)
+    }
+    //localStorage.setItem(`textInput${lastChar}`, `textInput${lastChar}`)
+    //localStorage.setItem(`dateInput${lastChar}`, `dateInput${lastChar}`)
+
+    todoMap = new Map(JSON.parse(localStorage.getItem("list")))
+    console.log("localStorage:", todoMap)
+
+
+    
     
   })
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+addBtn.addEventListener("click", function() {
+  
+  //localStorage.setItem("counter", counter)
+
+  if (document.getElementsByClassName("item").length == 0) {
+    pauseCounter += 1
+    counter += 1
+    addTemplate()
+  }
+  else if (pauseCounter > 0 && todoMap.size > 0) {
+    pauseCounter = 0
+    counter += 1
+    addTemplate()
+  }
+  else if (document.getElementsByClassName("item").length * 2 == todoMap.size   && reload == true) {
+    pauseCounter = 0
+    counter +=1
+    reload = false
+    addTemplate()
+  }
+
+
+  deleteFunction()
+
+
+
   submitBtns = document.querySelectorAll(".submit")
   submitBtns.forEach(function(Btn) {
     Btn.addEventListener("click", function() {
+      console.log(pauseCounter)
+      pauseCounter += 1
+      console.log(pauseCounter)
       let lastChar = Btn.id[Btn.id.length - 1]
       let itemToSave = document.getElementById(`item${lastChar}`)
       console.log(itemToSave)
@@ -86,10 +136,22 @@ addBtn.addEventListener("click", function() {
       todoMap.set(`dateItem${lastChar}`, itemToSave.querySelectorAll(".child")[1].value)
       localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
 
+
+    if (lastTodo > lastChar) {
+      lastTodo = lastTodo
+    } else {
+      lastTodo = lastChar
+      localStorage.setItem("lastTodo", lastTodo)
+    }
+
+      //localStorage.setItem(`textInput${lastChar}`, `textInput${lastChar}`)
+      //localStorage.setItem(`dateInput${lastChar}`, `dateInput${lastChar}`)
+      
+
       todoMap = new Map(JSON.parse(localStorage.getItem("list")))
       console.log("localStorage:", todoMap)
 
-      if (todoMap.get(`dateItem${lastChar}`).length == 0) { 
+      /*if (todoMap.get(`dateItem${lastChar}`).length == 0) { 
         console.log("No Date")
       }
       else {
@@ -101,8 +163,8 @@ addBtn.addEventListener("click", function() {
       }
       else {
         console.log(todoMap.get(`item${lastChar}`))
-      }
-      console.log(todoMap)
+      }*/
+      //console.log(todoMap)
       
       
       //console.log((itemToSave.querySelectorAll(".child")[1].value))
@@ -155,33 +217,16 @@ function addTemplate(i) {
 
 
   item.appendChild(deleteBtn)
-   //checker(submitBtn)
 
 
-   if (todoMap.size != null && i !== undefined) {  
-      //let text = document.getElementById(`textInput${i}`)
-      //let date = document.getElementById(`dateInput${i}`)
 
-      //console.log(`textInput${i}`)
-      //console.log(text)
+  IdChange(i, textInput, dateInput)
 
-      
-
-      textInput.setAttribute("value", todoMap.get(`item${i}`))  //give elements back their id
-      dateInput.setAttribute("value", todoMap.get(`dateItem${i}`))
-    }
    }
 
 
 
 
-function checker(tag) {
-  if (tag) {
-    console.log("Present")
-  } else {
-    console.log("Absent")
-  }
-}
 
 
 
@@ -190,6 +235,7 @@ function checker(tag) {
 
 function deleteAll() {
   counter = 0
+  rows = 0
   items = document.querySelectorAll(".item")
   items.forEach(function(item) {
     item.remove()
@@ -197,56 +243,141 @@ function deleteAll() {
 
   todoMap.clear()
   localStorage.clear()
+  pauseCounter = 0
 }
 
 
 
 
+function IdChange(i, textInput, dateInput) {
+  if (todoMap.size != null && i !== undefined) {   
+
+    textInput.parentElement.id = `item${i}`
+    textInput.id = `textInput${i}`
+    dateInput.id = `dateInput${i}`
+    
+    document.getElementById(`item${i}`).children[2].id = `submit${i}`
+    document.getElementById(`item${i}`).children[3].id = `delete${i}`
+
+    textInput.setAttribute("value", todoMap.get(`item${i}`))  //give elements back their id
+    dateInput.setAttribute("value", todoMap.get(`dateItem${i}`))
+  }
+}
 
 
 
+function deleteFunction() {
+  rows = todoMap.size / 2
+  let passVal = 0
+
+  let lastItemDate = null
+  let lastItemText = null
+  let lastItemDate2 = null
+  let lastItemText2 = null
+
+  let itemToRemove = null
 
 
+  deleteBtns = document.querySelectorAll(".delete")
+  deleteBtns.forEach(function(Btn) {
+    Btn.addEventListener("click", function() {
+      pauseCounter += 1
+      let lastChar = Btn.id[Btn.id.length - 1]
 
+      if (Btn.id === `delete${lastChar}`) {
+        console.log(Btn.id)
+        lastChar = Btn.id[Btn.id.length - 1]
+        itemToRemove = document.getElementById(`item${lastChar}`)
+        passVal += 1
 
+        lastItemText = todoMap.get(`item${rows}`)
+        lastItemDate = todoMap.get(`dateItem${rows}`)
 
+        lastItemText2 = lastItemText
+        lastItemDate2 = lastItemDate
 
+        for (let i = rows; i-1 >= 1; i--) {
+            lastItemText = lastItemText2
+            lastItemDate = lastItemDate2
+          if (passVal > 0) {
+            break
+          }
+          if (i < Number(lastChar)) {
+            continue
+          } if (i >= Number(lastChar)) { 
+            lastItemText2 = todoMap.get(`item${i-1}`)
+            lastItemDate2 = todoMap.get(`dateItem${i-1}`)
+            todoMap.set(`item${i-1}`, lastItemText)
+            todoMap.set(`dateItem${i-1}`, lastItemDate)
 
-
-/*function decreaseID(id) {
-  items = document.querySelectorAll(".item")
-  items.forEach( function(item) {
-    let lastChar = item.id[item.id.length - 1]
-    try {
-      if (lastChar < id) {
-        let replace = lastChar - 1
-        item.id = `item${replace}`
-        const children = item.children
-        let delBtnChange = document.getElementById(`delete${lastChar}`)
-        let subBtnChange = document.getElementById(`submit${lastChar}`)
+            document.getElementById(`item${i-1}`).children[0].setAttribute("value", lastItemText)
+            document.getElementById(`item${i-1}`).children[1].setAttribute("value", lastItemDate)
+          }
         
-        delBtnChange.id = `delete${replace}`
-        subBtnChange.id = `submit${replace}`
-      } else {
-          null
-      }
-    } catch (e) {
-      console.log("disregard")
-    }
 
+        }
+
+        todoMap.delete(`item${rows}`)
+        todoMap.delete(`dateItem${rows}`)
+        document.getElementById(`item${rows}`).remove()
+
+              
+
+        localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
+        todoMap = new Map(JSON.parse(localStorage.getItem("list")))
+        }
+        
+
+      /*if (todoMap.has(`item${rows}`)) {
+        lastItemText = todoMap.get(`item${rows}`)
+        lastItemDate = todoMap.get(`dateItem${rows}`)
+        console.log(lastItemText)
+        console.log(lastItemDate)
+        console.log(Btn.id)
+        if (Btn.id === `delete${lastChar}`) {
+          itemToRemove.children[0].setAttribute("value", lastItemText)
+          itemToRemove.children[1].setAttribute("value", lastItemDate)
+          
+          lastItem.remove()
+          localStorage.removeItem(`item${rows}`)
+          localStorage.removeItem(`dateItem${rows}`)
+
+          todoMap.delete(`item${rows}`)
+          todoMap.delete(`dateItem${rows}`)
+
+          todoMap.set(`item${lastChar}`, lastItemText)
+          todoMap.set(`dateItem${lastChar}`, lastItemDate)
+
+          
+
+          localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
+          todoMap = new Map(JSON.parse(localStorage.getItem("list")))
+          
+        }  
+
+      }
+        else {
+          if (Btn.id === `delete${lastChar}`) {
+            itemToRemove.remove()
+
+            localStorage.removeItem(`item${lastChar}`)
+            localStorage.removeItem(`dateItem${lastChar}`)
+
+            todoMap.delete(`item${lastChar}`)
+            todoMap.delete(`dateItem${lastChar}`)
+
+            
+
+            localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
+            todoMap = new Map(JSON.parse(localStorage.getItem("list")))
+          }
+
+        
+        }*/
+      
+    })
   })
 }
-*/
-
-
-
-
-
-
-
-
-
-
 
 
 

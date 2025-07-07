@@ -119,16 +119,14 @@ addBtn.addEventListener("click", function() {
   }
 
 
-  deleteFunction()
+  
 
 
 
   submitBtns = document.querySelectorAll(".submit")
   submitBtns.forEach(function(Btn) {
     Btn.addEventListener("click", function() {
-      console.log(pauseCounter)
       pauseCounter += 1
-      console.log(pauseCounter)
       let lastChar = Btn.id[Btn.id.length - 1]
       let itemToSave = document.getElementById(`item${lastChar}`)
       console.log(itemToSave)
@@ -150,21 +148,7 @@ addBtn.addEventListener("click", function() {
 
       todoMap = new Map(JSON.parse(localStorage.getItem("list")))
       console.log("localStorage:", todoMap)
-
-      /*if (todoMap.get(`dateItem${lastChar}`).length == 0) { 
-        console.log("No Date")
-      }
-      else {
-        console.log(todoMap.get(`dateItem${lastChar}`))
-      }
-
-      if (todoMap.get(`item${lastChar}`).length == 0) { 
-        console.log("No ToDo")
-      }
-      else {
-        console.log(todoMap.get(`item${lastChar}`))
-      }*/
-      //console.log(todoMap)
+      rows = todoMap.size / 2
       
       
       //console.log((itemToSave.querySelectorAll(".child")[1].value))
@@ -279,12 +263,19 @@ function deleteFunction() {
 
 
   deleteBtns = document.querySelectorAll(".delete")
-  deleteBtns.forEach(function(Btn) {
-    Btn.addEventListener("click", function() {
+  let Btn = null
+  itemList.addEventListener("click", function(event) {
+    if (event.target.matches(".delete")) {
+      Btn = event.target
       pauseCounter += 1
       let lastChar = Btn.id[Btn.id.length - 1]
 
-      if (Btn.id === `delete${lastChar}`) {
+      if (document.getElementsByClassName("item").length > 0 && todoMap.size == 0) {
+        document.getElementById(`item${lastChar}`).remove()
+        counter -= 1
+      }
+
+      else if (Btn.id === `delete${lastChar}`) {
         console.log(Btn.id)
         lastChar = Btn.id[Btn.id.length - 1]
         itemToRemove = document.getElementById(`item${lastChar}`)
@@ -297,34 +288,42 @@ function deleteFunction() {
         lastItemDate2 = lastItemDate
 
         for (let i = rows; i-1 >= 1; i--) {
-            lastItemText = lastItemText2
-            lastItemDate = lastItemDate2
-          if (passVal > 0) {
-            break
-          }
           if (i < Number(lastChar)) {
             continue
-          } if (i >= Number(lastChar)) { 
+          } if (i > Number(lastChar)) { 
             lastItemText2 = todoMap.get(`item${i-1}`)
             lastItemDate2 = todoMap.get(`dateItem${i-1}`)
+            console.log(lastItemText)
+            console.log(lastItemText2)
             todoMap.set(`item${i-1}`, lastItemText)
             todoMap.set(`dateItem${i-1}`, lastItemDate)
 
-            document.getElementById(`item${i-1}`).children[0].setAttribute("value", lastItemText)
-            document.getElementById(`item${i-1}`).children[1].setAttribute("value", lastItemDate)
+            
+            document.getElementById(`item${i-1}`).children[0].value = lastItemText
+            document.getElementById(`item${i-1}`).children[1].value = lastItemDate
+            //document.getElementById(`item${i-1}`).children[0].setAttribute("value", lastItemText)
+            //document.getElementById(`item${i-1}`).children[1].setAttribute("value", lastItemDate)
+
+            lastItemText = lastItemText2
+            lastItemDate = lastItemDate2
+
+
           }
         
 
         }
 
-        todoMap.delete(`item${rows}`)
-        todoMap.delete(`dateItem${rows}`)
-        document.getElementById(`item${rows}`).remove()
+          rows = todoMap.size / 2
+          todoMap.delete(`item${rows}`)
+          todoMap.delete(`dateItem${rows}`)
 
-              
+          counter -= 1
+          document.getElementById(`item${rows}`).remove()
 
-        localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
-        todoMap = new Map(JSON.parse(localStorage.getItem("list")))
+                
+
+          localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
+          todoMap = new Map(JSON.parse(localStorage.getItem("list")))
         }
         
 
@@ -375,7 +374,7 @@ function deleteFunction() {
         
         }*/
       
-    })
+    }
   })
 }
 

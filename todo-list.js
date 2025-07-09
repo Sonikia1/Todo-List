@@ -9,12 +9,11 @@ let lastTodo = null
 let counter = 0
 let pauseCounter = 0
 
-//localStorage.clear()
+
 let todoMap = JSON.parse(localStorage.getItem("list"))
 todoMap = new Map(todoMap)
 
-console.log(todoMap)
-console.log(todoMap.size)
+
 
 let rows = null
 
@@ -22,16 +21,12 @@ let rows = null
 if (todoMap.size == 0) {
   todoMap = new Map()
   rows = 0
-  localStorage.setItem("lastTodo", 0)
   //localStorage.getItem("list", JSON.stringify(Array.from(todoMap.entries())))
 } else {
   rows = todoMap.size / 2
-  lastTodo = localStorage.getItem("lastTodo")
   console.log(rows)
   for (let i = 1; i <= rows; i++) {
     addTemplate(i)
-    //textInput.textContent = todoMap.get(`item${i}`)
-    //dateInput.textContent = todoMap.get(`dateItem${i}`) 
   }
 
 }
@@ -67,12 +62,6 @@ submitBtns.forEach(function(Btn) {
     localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
 
 
-    if (lastTodo > lastChar) {
-      lastTodo = lastTodo
-    } else {
-      lastTodo = lastChar
-      localStorage.setItem("lastTodo", lastTodo)
-    }
     //localStorage.setItem(`textInput${lastChar}`, `textInput${lastChar}`)
     //localStorage.setItem(`dateInput${lastChar}`, `dateInput${lastChar}`)
 
@@ -135,12 +124,6 @@ addBtn.addEventListener("click", function() {
       localStorage.setItem("list", JSON.stringify(Array.from(todoMap.entries())))
 
 
-    if (lastTodo > lastChar) {
-      lastTodo = lastTodo
-    } else {
-      lastTodo = lastChar
-      localStorage.setItem("lastTodo", lastTodo)
-    }
 
       //localStorage.setItem(`textInput${lastChar}`, `textInput${lastChar}`)
       //localStorage.setItem(`dateInput${lastChar}`, `dateInput${lastChar}`)
@@ -233,7 +216,7 @@ function deleteAll() {
 
 
 
-function IdChange(i, textInput, dateInput) {
+function IdChange(i, textInput, dateInput) {   
   if (todoMap.size != null && i !== undefined) {   
 
     textInput.parentElement.id = `item${i}`

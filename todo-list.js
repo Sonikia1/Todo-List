@@ -25,6 +25,7 @@ if (todoMap.size == 0) {
 } else {
   rows = todoMap.size / 2
   console.log(rows)
+  pauseCounter +=1
   for (let i = 1; i <= rows; i++) {
     addTemplate(i)
   }

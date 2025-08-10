@@ -91,10 +91,14 @@ addBtn.addEventListener("click", function() {
   
   //localStorage.setItem("counter", counter)
 
+
   if (document.getElementsByClassName("item").length == 0) {
     pauseCounter += 1
     counter += 1
     addTemplate()
+  }
+  if (document.getElementsByClassName("item").length == 9) {
+    alert("Finish up some tasks before you add more.")
   }
   else if (pauseCounter > 0 && todoMap.size > 0) {
     pauseCounter = 0
